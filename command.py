@@ -13,8 +13,8 @@ import sys
 
 
 if __name__ == '__main__':
-    os.environ.setdefault('EDEN_PROJECT_DIR', os.path.dirname(__file__))
-    os.environ.setdefault('EDEN_PROJECT_CONFIG', 'app.config.config.yml')
+    os.environ.setdefault('EDEN_APP_DIR', os.path.dirname(__file__))
+    os.environ.setdefault('EDEN_APP_CONFIG', 'app.config.config')
 
-    from eden.commands import execute
+    from eden.core.commands import execute
     execute(sys.argv)

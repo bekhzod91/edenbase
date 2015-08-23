@@ -1,16 +1,16 @@
 # -------------------------------------------------
-# Eden framework config
+# Eden framework configuration
 # -------------------------------------------------
 
 # SECURITY WARNING: don't run with debug turned on in production!
 debug: True
 
-# ----------------------
-# Topical plugins      |
-# ----------------------
-plugins:
-  - eden.plugin.managements
-  - eden.core.validators
+# -------------------------
+# Components plugins      |
+# -------------------------
+components:
+  - eden.components.werkzeug
+  - eden.components.jinja
 
 
 # ---------------------

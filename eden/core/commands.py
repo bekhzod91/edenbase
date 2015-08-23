@@ -13,7 +13,7 @@ import os
 import re
 import abc
 import importlib
-
+from eden.core.config import Config
 
 COMMAND_DIR = 'commands'
 MAIN_COMMAND = 0
@@ -22,7 +22,7 @@ MAIN_COMMAND = 0
 MESSAGE_USAGE = 'Usage: command.py subcommand [options] [args]'
 MESSAGE_AVAILABLE_SUB_COMMAND = 'Available subcommands:\n'
 MESSAGE_MODULE = '[%s]'
-MESSAGE_COMMAND = '   %s:   %s'
+MESSAGE_COMMAND = '  %s%s'
 MESSAGE_COMMAND_EMPTY = 'Document not ready'
 MESSAGE_PROJECT_NAME_ART_TAG = '''
                                   dddddddd
@@ -44,11 +44,8 @@ E::::::::::::::::::::E  d:::::::::ddd::::d  ee:::::::::::::e    n::::n    n::::n
 EEEEEEEEEEEEEEEEEEEEEE   ddddddddd   ddddd    eeeeeeeeeeeeee    nnnnnn    nnnnnn
 '''
 
-modules = [
-    'eden.core.managements',
-    'eden.core.validators'
-]
-
+PYTHON_INIT_FILE = '__init__.py'
+MODULES = Config.get_instance().get_value('app.config.config', 'components')
 
 # Exception
 class DuplicateCommand(Exception):
@@ -99,6 +96,10 @@ class BgColor(object):
         print(self.UNDERLINE + message + self.END)
 
 
+def correct_space_length(text, space_length):
+    return ' ' * (space_length - len(text))
+
+
 def command_name_to_class_name(command_name):
     class_name_parts = []
     for command_name_part in command_name.split('_'):
@@ -116,8 +117,8 @@ class ConsoleCommandHelper(object):
 
     def __find_commands(self, file, import_module_name):
         commands = []
-        file_match = re.match('^([A-Za-z0-9]*?)\.py$', file)
-        if file_match:
+        file_match = re.match('^([A-Za-z0-9_]*?)\.py$', file)
+        if file_match and PYTHON_INIT_FILE != file:
             command_name = file_match.groups()[0]
             try:
                 class_name = \
@@ -138,7 +139,7 @@ class ConsoleCommandHelper(object):
 
     def __find_modules(self):
         modules_list = []
-        for module in modules:
+        for module in MODULES:
             import_module_name = module + '.' + COMMAND_DIR
             try:
                 module_import = importlib.import_module(import_module_name)
@@ -162,13 +163,14 @@ class ConsoleCommandHelper(object):
         for module in self.__find_modules():
             BgColor.get_instance().success(MESSAGE_MODULE % module['name'])
             for command in module['commands']:
-                try:
-                    command_instance = command['object']()
-                    BgColor.get_instance().white(MESSAGE_COMMAND % (
-                        command['name'], command_instance.helper))
-                except TypeError:
-                    BgColor.get_instance().white(MESSAGE_COMMAND % (
-                        command['name'], MESSAGE_COMMAND_EMPTY))
+                command_instance = command['object']()
+                helper = getattr(
+                    command_instance, 'helper', MESSAGE_COMMAND_EMPTY)
+
+                # Add spaces for showing beautiful
+                spaces = correct_space_length(command['name'], 30)
+                BgColor.get_instance().white(MESSAGE_COMMAND % (
+                    command['name'] + spaces, helper))
 
         BgColor.get_instance().fail('\n' + self.message)
 
@@ -196,7 +198,7 @@ class ConsoleCommandHandler(object):
 
     def __simple_command(self, command_args):
         """
-        Console simple command example("manage.py simple_command ")
+        Console simple command example("command.py simple_command ")
         :return: dict
         """
         simple_command = []
@@ -216,7 +218,7 @@ class ConsoleCommandHandler(object):
 
     def __short_command(self, command_args):
         """
-        Console short command example("manage.py command -short /var/www/")
+        Console short command example("command.py command -short /var/www/")
         :return: dict
         """
         short_command = {}
@@ -257,8 +259,9 @@ class ConsoleCommandHandler(object):
         return full_command
 
     def __find_command(self, main_command):
+        Config.get_instance().get_value('app.config.config', 'components')
         command = None
-        for module in modules:
+        for module in MODULES:
             import_module_name = module + '.' + COMMAND_DIR + '.' + main_command
             try:
                 module = importlib.import_module(import_module_name)
