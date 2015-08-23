@@ -12,7 +12,7 @@ __status__ = "Development"
 from eden.commands import CommandBase
 
 class Run(CommandBase):
-    help = 'RUN command with argument run 0.0.0.0:8080'
+    helper = 'RUN command with argument run 0.0.0.0:8080'
 
     def handler(self, *args, **kwargs):
         pass
