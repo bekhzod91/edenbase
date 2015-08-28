@@ -13,7 +13,8 @@ import os
 import re
 import abc
 import importlib
-from eden.core.config import Config
+from eden.core.config.api import Config
+from eden.core.commands.viewer import BgColor, correct_space_length
 
 COMMAND_DIR = 'commands'
 MAIN_COMMAND = 0
@@ -45,59 +46,11 @@ EEEEEEEEEEEEEEEEEEEEEE   ddddddddd   ddddd    eeeeeeeeeeeeee    nnnnnn    nnnnnn
 '''
 
 PYTHON_INIT_FILE = '__init__.py'
-MODULES = Config.get_instance().get_value('app.config.config', 'components')
+MODULES = Config.instance.get_value('components')
 
 # Exception
 class DuplicateCommand(Exception):
     pass
-
-# Command color state
-class BgColor(object):
-    __instance = None
-
-    HEADER = '\033[95m'
-    WHITE = '\033[01m'
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    END = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-
-    def __new__(cls, *args, **kwargs):
-        if not cls.__instance:
-            cls.__instance = super(BgColor, cls).__new__(cls, *args, **kwargs)
-        return cls.__instance
-
-    @staticmethod
-    def get_instance():
-        return BgColor()
-
-    def warning(self, message):
-        print(self.WARNING + message + self.END)
-
-    def fail(self, message):
-        print(self.FAIL + message + self.END)
-
-    def info(self, message):
-        print(self.BLUE + message + self.END)
-
-    def success(self, message):
-        print(self.GREEN + message + self.END)
-
-    def white(self, message):
-        print(self.WHITE + message + self.END)
-
-    def bold(self, message):
-        print(self.BOLD + message + self.END)
-
-    def underline(self, message):
-        print(self.UNDERLINE + message + self.END)
-
-
-def correct_space_length(text, space_length):
-    return ' ' * (space_length - len(text))
 
 
 def command_name_to_class_name(command_name):
@@ -109,7 +62,7 @@ def command_name_to_class_name(command_name):
     return ''.join(class_name_parts)
 
 
-class ConsoleCommandHelper(object):
+class CommandHelper(object):
     message = None
 
     def __init__(self, **kwargs):
@@ -157,11 +110,11 @@ class ConsoleCommandHelper(object):
         return modules_list
 
     def show_helper(self):
-        BgColor.get_instance().white(MESSAGE_USAGE)
-        BgColor.get_instance().info(MESSAGE_PROJECT_NAME_ART_TAG)
+        BgColor.instance.white(MESSAGE_USAGE)
+        BgColor.instance.info(MESSAGE_PROJECT_NAME_ART_TAG)
         print(MESSAGE_AVAILABLE_SUB_COMMAND)
         for module in self.__find_modules():
-            BgColor.get_instance().success(MESSAGE_MODULE % module['name'])
+            BgColor.instance.success(MESSAGE_MODULE % module['name'])
             for command in module['commands']:
                 command_instance = command['object']()
                 helper = getattr(
@@ -169,10 +122,10 @@ class ConsoleCommandHelper(object):
 
                 # Add spaces for showing beautiful
                 spaces = correct_space_length(command['name'], 30)
-                BgColor.get_instance().white(MESSAGE_COMMAND % (
+                BgColor.instance.white(MESSAGE_COMMAND % (
                     command['name'] + spaces, helper))
 
-        BgColor.get_instance().fail('\n' + self.message)
+        BgColor.instance.fail('\n' + self.message)
 
 
 class CommandBase(metaclass=abc.ABCMeta):
@@ -259,7 +212,6 @@ class ConsoleCommandHandler(object):
         return full_command
 
     def __find_command(self, main_command):
-        Config.get_instance().get_value('app.config.config', 'components')
         command = None
         for module in MODULES:
             import_module_name = module + '.' + COMMAND_DIR + '.' + main_command
@@ -275,7 +227,7 @@ class ConsoleCommandHandler(object):
                 pass
 
         if not command:
-            console_command_helper = ConsoleCommandHelper(
+            console_command_helper = CommandHelper(
                 message='Command %s not found!' % main_command)
             console_command_helper.show_helper()
 
@@ -299,6 +251,5 @@ def execute(*args):
         console_command_handler = ConsoleCommandHandler(args[0][1:])
         console_command_handler.execute()
     else:
-        console_command_helper = ConsoleCommandHelper(
-            message='Please choice command!')
+        console_command_helper = CommandHelper(message='Please choice command!')
         console_command_helper.show_helper()

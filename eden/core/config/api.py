@@ -10,18 +10,16 @@ __status__ = "Development"
 
 import os
 from eden.core.format import YamlFormat
+from eden.core.pattern.singleton import Singleton
+
 
 CONFIG_FILE_FORMAT = '.yml'
+DEFAULT_CONFIG = os.environ.get('EDEN_APP_CONFIG')
 
-
-class Config(object):
+class Config(Singleton):
     __instance = None
     __config = {}
-
-    def __new__(cls, *args, **kwargs):
-        if not cls.__instance:
-            cls.__instance = super(Config, cls).__new__(cls, *args, **kwargs)
-        return cls.__instance
+    __default_config = None
 
     def __get_config(self, obj):
         app_url = os.environ.get('EDEN_APP_DIR')
@@ -32,11 +30,7 @@ class Config(object):
 
         return YamlFormat.decode(content)
 
-    @staticmethod
-    def get_instance():
-        return Config()
-
-    def get_value(self, obj, key):
+    def get_value(self, key, obj=DEFAULT_CONFIG):
         try:
             return self.__config[obj][key]
         except KeyError:
