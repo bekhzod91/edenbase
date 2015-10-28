@@ -8,5 +8,14 @@ __version__ = "0.0.1"
 __email__ = "bekhzod.tillakhanov@gmail.com"
 __status__ = "Development"
 
+import os
 
-class Base
+class BaseUrl(object):
+    identifier = '%base_url%'
+
+    def handler(self, content):
+        base_url = os.environ.get('EDEN_APP_DIR')
+        content.replace(self.identifier, base_url)
+
+        return content
+

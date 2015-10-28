@@ -12,9 +12,26 @@ import os
 from eden.core.format import YamlFormat
 from eden.core.pattern.singleton import Singleton
 
+from .exception import ConfigParamsNotFound
+from .replace.base_url import BaseUrl
+
 
 CONFIG_FILE_FORMAT = '.yml'
-DEFAULT_CONFIG = os.environ.get('EDEN_APP_CONFIG')
+ENVIRONMENT_CONFIG = 'EDEN_APP_CONFIG'
+
+
+def get_config_path(obj):
+    app_url = os.environ.get('EDEN_APP_DIR')
+    directories = obj.split('.')
+    return os.path.join(*[app_url] + directories) + CONFIG_FILE_FORMAT
+
+
+def set_main_config(command_args, config_obj):
+    if command_args.get('config') and \
+            os.path.isfile(get_config_path(command_args['config'])):
+        os.environ.setdefault(ENVIRONMENT_CONFIG, command_args['config'])
+    os.environ.setdefault(ENVIRONMENT_CONFIG, config_obj)
+
 
 class Config(Singleton):
     __instance = None
@@ -22,20 +39,24 @@ class Config(Singleton):
     __default_config = None
 
     def __get_config(self, obj):
-        app_url = os.environ.get('EDEN_APP_DIR')
-        directories = obj.split('.')
-        config_url = os.path.join(*[app_url] + directories) + CONFIG_FILE_FORMAT
+        config_path = get_config_path(obj)
+        content = open(config_path).read()
 
-        content = open(config_url).read()
+        # replace base_url
+        base_url = BaseUrl()
+        content = base_url.handler(content)
 
         return YamlFormat.decode(content)
 
-    def get_value(self, key, obj=DEFAULT_CONFIG):
+    def get_value(self, key, config_file):
         try:
-            return self.__config[obj][key]
+            return self.__config[config_file][key]
         except KeyError:
-            self.__config[obj] = self.__get_config(obj)
-            return self.get_value(obj, key)
+            self.__config[config_file] = self.__get_config(config_file)
+            return self.get_value(key, config_file)
 
 
 
+def config(key, config_file=None):
+    config_file = config_file or os.environ.get('EDEN_APP_CONFIG')
+    return Config.instance.get_value(key, config_file)

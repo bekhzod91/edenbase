@@ -9,10 +9,11 @@ __email__ = "bekhzod.tillakhanov@gmail.com"
 __status__ = "Development"
 
 
-from eden.core.commands import CommandBase
+from eden.core.commands.base import CommandBase
 
 class ClearCache(CommandBase):
     helper = 'run command clear jinja template cache'
 
     def handler(self, *args, **kwargs):
-        pass
+        print(args)
+        print(kwargs)

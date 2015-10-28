@@ -1,0 +1,34 @@
+# -------------------------------------------------
+# Eden framework configuration
+# -------------------------------------------------
+
+# SECURITY WARNING: don't run with debug turned on in production!
+debug: True
+
+# -------------------------
+# Components plugins      |
+# -------------------------
+components:
+  - eden.components.werkzeug
+  - eden.components.jinja
+
+
+# ---------------------
+# Database setting    |
+# ---------------------
+database:
+    database: 'postgresql'
+    database_hostname: 'localhost'
+    database_port: '5432'
+    database_name: 'edendev'
+    database_username: 'root'
+    database_password: 'password'
+
+
+# ---------------------
+# Template url        |
+#----------------------
+base_url: '%base_url%/template'
+
+
+

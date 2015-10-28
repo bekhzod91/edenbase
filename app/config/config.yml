@@ -25,4 +25,10 @@ database:
     database_password: 'password'
 
 
+# ---------------------
+# Template url        |
+#----------------------
+base_url: '%base_url%/template'
+
+
 

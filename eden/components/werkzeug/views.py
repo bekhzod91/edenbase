@@ -9,3 +9,6 @@ __email__ = "bekhzod.tillakhanov@gmail.com"
 __status__ = "Development"
 
 
+class BaseView(object):
+    pass
+

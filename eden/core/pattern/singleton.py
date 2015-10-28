@@ -15,10 +15,10 @@ class classproperty(property):
 
 
 class Singleton(object):
-    _instance = None
+    __instance = None
 
     @classproperty
     def instance(cls):
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance

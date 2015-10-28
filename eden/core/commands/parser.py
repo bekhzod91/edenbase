@@ -10,6 +10,7 @@ __status__ = "Development"
 
 import re
 
+
 def command_name_to_class_name(command_name):
     class_name_parts = []
     for command_name_part in command_name.split('_'):
@@ -82,4 +83,3 @@ def full_command_search(command_args):
             full_command[key] = value
 
     return full_command
-
