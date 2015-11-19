@@ -12,7 +12,6 @@ components:
   - eden.components.werkzeug
   - eden.components.jinja
 
-
 # ---------------------
 # Database setting    |
 # ---------------------
@@ -25,10 +24,17 @@ database:
     database_password: 'password'
 
 
-# ---------------------
-# Template url        |
-#----------------------
-base_url: '%base_url%/template'
+# ----------------------------
+# Components settings        |
+# ----------------------------
+
+# Werkzeug route
+werkzeug_route:
+  - app.my_component.route
+
+
+# Jinja tempalte url
+jinja_config: '%base_url%/template'
 
 
 

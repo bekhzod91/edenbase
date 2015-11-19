@@ -12,7 +12,6 @@ import os
 from eden.core.format import YamlFormat
 from eden.core.pattern.singleton import Singleton
 
-from .exception import ConfigParamsNotFound
 from .replace.base_url import BaseUrl
 
 
