@@ -1,0 +1,4 @@
+# app/my_component/config/config.yml
+routing:
+  - { url: '/view/<id>', view: 'app.my_component.view.hello', name: 'view'}
+  - { url: '/view1/<id>', view: 'app.my_component.view.hello', name: 'user'}

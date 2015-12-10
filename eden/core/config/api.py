@@ -39,7 +39,8 @@ class Config(Singleton):
 
     def __get_config(self, obj):
         config_path = get_config_path(obj)
-        content = open(config_path).read()
+        with open(config_path) as config_file:
+            content = config_file.read()
 
         # replace base_url
         base_url = BaseUrl()

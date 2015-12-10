@@ -27,12 +27,7 @@ class Run(CommandBase):
         port = self.get_port(args, kwargs) or DEFAULT_PORT
 
         from werkzeug.serving import run_simple
-        from werkzeug.wrappers import Response
-        # import app.my_component.views
-
-        def application(environ, start_response):
-            response = Response('Hello World!', mimetype='text/plain')
-            return response(environ, start_response)
+        from eden.components.werkzeug.route import application
 
         run_simple(
             host, int(port), application,

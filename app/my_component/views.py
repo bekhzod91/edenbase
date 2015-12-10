@@ -8,8 +8,6 @@ __version__ = "0.0.1"
 __email__ = "bekhzod.tillakhanov@gmail.com"
 __status__ = "Development"
 
-from eden.components.werkzeug.route import route
 
-@route('/')
 def hello():
     return 'Hello World'

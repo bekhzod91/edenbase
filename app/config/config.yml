@@ -30,7 +30,9 @@ database:
 
 # Werkzeug route
 werkzeug_route:
-  - app.my_component.route
+  - app.my_component.config.config
+
+werkzeug_static: '%base_url%/static'
 
 
 # Jinja tempalte url
