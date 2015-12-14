@@ -32,6 +32,11 @@ database:
 werkzeug_route:
   - app.my_component.config.config
 
+# Werkzeug middleware
+werkzeug_middleware:
+  - eden.components.werkzeug.StaticFilesMiddleware
+  - eden.components.werkzeug.StaticFilesMiddleware
+
 werkzeug_static: '%base_url%/static'
 
 

@@ -14,20 +14,33 @@ from eden.core.config.api import config
 from eden.components.werkzeug import exception
 from werkzeug.routing import Map, Rule
 from werkzeug.wrappers import Request
-from werkzeug.wsgi import SharedDataMiddleware
 
 
-ROUTE_CONFIG_NAME = 'werkzeug_route'
-
+ROUTE_PATH_LIST = 'werkzeug_route'
+ROUTE_KEY_IN_CONFIG = 'routing'
+ROUTE_CONFIG_URL_KEY = 'url'
+ROUTE_CONFIG_VIEW_KEY = 'view'
+ROUTE_CONFIG_NAME_KEY = 'name'
 
 class EdenRouteToWerkzeug(Singleton):
+    """
+        Translate eden route to werkzeug route
+        reading ROUTE_CONFIG_NAME is global config for routing list
+    """
     __routes = []
 
     def set_route(self, url, view, name):
+        """
+            Keyword arguments:
+            url -- the simple werkzeug url
+            view -- the handler this route
+            name -- the unique name for this route
+        """
         endpoint = '%s:%s' % (view, name)
         self.__routes.append(Rule(url, endpoint=endpoint))
 
     def get_route(self):
+        """Return werkzeug Map object instance"""
         return Map(self.__routes)
 
 
@@ -36,35 +49,44 @@ class Routing(Singleton):
     __urls, __names = [], []
 
     def reading_project_route(self):
-        for werkzeug_route in config(ROUTE_CONFIG_NAME):
-            self.__reading_components_route(werkzeug_route)
+        for route_path in config(ROUTE_PATH_LIST):
+            for route_params in self.__get_valid_routes(route_path):
+                url, view, name = route_params
+                EdenRouteToWerkzeug.instance.set_route(url, view, name)
 
         return EdenRouteToWerkzeug.instance.get_route()
 
-    def __reading_components_route(self, werkzeug_route):
-        for routing in config('routing', werkzeug_route):
-            # Check exists
-            if not routing.get('url'):
-                raise exception.RouteUrlNotFoundException
+    def __get_valid_routes(self, werkzeug_route):
+        """
+            Get correct routes or throw exception
+        """
+        try:
+            for routing in config(ROUTE_KEY_IN_CONFIG, werkzeug_route):
+                # Check exists
+                if not routing.get(ROUTE_CONFIG_URL_KEY):
+                    raise exception.RouteUrlNotFoundException
 
-            if not routing.get('view'):
-                raise exception.RouteViewNotFoundException
+                if not routing.get(ROUTE_CONFIG_VIEW_KEY):
+                    raise exception.RouteViewNotFoundException
 
-            if not routing.get('name'):
-                raise exception.RouteNameNotFoundException
+                if not routing.get(ROUTE_CONFIG_NAME_KEY):
+                    raise exception.RouteNameNotFoundException
 
-            # Check duplicate
-            if routing['url'] in self.__urls:
-                raise exception.RouteUrlDuplicatedException
+                # Check duplicate
+                if routing[ROUTE_CONFIG_URL_KEY] in self.__urls:
+                    raise exception.RouteUrlDuplicatedException
 
-            if routing['name'] in self.__names:
-                raise exception.RouteNameDuplicatedException
+                if routing[ROUTE_CONFIG_NAME_KEY] in self.__names:
+                    raise exception.RouteNameDuplicatedException
 
-            self.__urls.append(routing['url'])
-            self.__names.append(routing['name'])
+                self.__urls.append(routing[ROUTE_CONFIG_URL_KEY])
+                self.__names.append(routing[ROUTE_CONFIG_NAME_KEY])
 
-            EdenRouteToWerkzeug.instance.set_route(
-                routing['url'], routing['view'], routing['name'])
+                yield routing['url'], routing['view'], routing['name']
+        except exception.RoutingException as route_exception:
+            # Protected shadow exceptions
+            self.__urls, self.__names = [], []
+            raise route_exception
 
     def get_route(self):
         if self.__routes:

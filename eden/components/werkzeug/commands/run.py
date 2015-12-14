@@ -31,7 +31,8 @@ class Run(CommandBase):
 
         run_simple(
             host, int(port), application,
-            use_debugger=debug, use_reloader=debug
+            use_debugger=debug, use_reloader=debug,
+            reloader_type='stat', extra_extensions=['.yml']
         )
 
     def get_host(self, simple_commands, short_and_full_commands):

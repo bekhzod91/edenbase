@@ -5,20 +5,38 @@ __version__ = "0.0.1"
 __email__ = "bekhzod.tillakhanov@gmail.com"
 __status__ = "Development"
 
+from werkzeug.exceptions import HTTPException
 
-class RouteUrlNotFoundException(Exception):
-    pass
 
-class RouteViewNotFoundException(Exception):
-    pass
-
-class RouteNameNotFoundException(Exception):
+class RoutingException(HTTPException):
     pass
 
 
+class RouteUrlNotFoundException(RoutingException):
+    code = 500
+    description = (
+        "In werkzeug_route not found <b>url</b> keywords"
+    )
 
-class RouteNameDuplicatedException(Exception):
+    def get_description(self, env=None):
+        return self.get_description
+
+class RouteViewNotFoundException(RoutingException):
+    code = 500
+    description = (
+        "In werkzeug_route not found <b>view</b> keywords"
+    )
+
+class RouteNameNotFoundException(RoutingException):
+    code = 500
+    description = (
+        "In werkzeug_route not found <b>name</b> keywords"
+    )
+
+
+
+class RouteNameDuplicatedException(RoutingException):
     pass
 
-class RouteUrlDuplicatedException(Exception):
+class RouteUrlDuplicatedException(RoutingException):
     pass
