@@ -17,8 +17,8 @@ from .parser import (
     command_name_to_class_name
 )
 
-from eden.core.config.api import config, set_main_config
-
+from eden.core.config import config
+from eden.core.config.handler import set_main_config
 
 MAIN_COMMAND = 0
 

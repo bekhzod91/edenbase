@@ -40,3 +40,7 @@ class RouteNameDuplicatedException(RoutingException):
 
 class RouteUrlDuplicatedException(RoutingException):
     pass
+
+
+class MiddlewareNotFound(Exception):
+    pass

@@ -34,10 +34,11 @@ werkzeug_route:
 
 # Werkzeug middleware
 werkzeug_middleware:
-  - eden.components.werkzeug.StaticFilesMiddleware
-  - eden.components.werkzeug.StaticFilesMiddleware
+  - eden.components.werkzeug.middleware.RoutingMiddleware
+#  - eden.components.werkzeug.middleware.StaticFilesMiddleware
 
-werkzeug_static: '%base_url%/static'
+werkzeug_static_url: '/static/'
+werkzeug_static_root: '%base_url%/static'
 
 
 # Jinja tempalte url

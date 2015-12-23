@@ -12,7 +12,7 @@ __status__ = "Development"
 import re
 
 from eden.core.commands.base import CommandBase
-from eden.core.config.api import config
+from eden.core.config import config
 
 DEFAULT_HOST = 'localhost'
 DEFAULT_PORT = 8080
@@ -27,12 +27,14 @@ class Run(CommandBase):
         port = self.get_port(args, kwargs) or DEFAULT_PORT
 
         from werkzeug.serving import run_simple
-        from eden.components.werkzeug.route import application
+        from eden.components.werkzeug.application import application
+        from eden.components.werkzeug.utils import find_config_files
 
         run_simple(
-            host, int(port), application,
+            host, int(port), application(),
             use_debugger=debug, use_reloader=debug,
-            reloader_type='stat', extra_extensions=['.yml']
+            reloader_type='stat',
+            extra_files=find_config_files(('.yml', ))
         )
 
     def get_host(self, simple_commands, short_and_full_commands):

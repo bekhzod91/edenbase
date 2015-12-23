@@ -15,7 +15,7 @@ import importlib
 from .parser import command_name_to_class_name
 from .viewer import BgColor, correct_space_length
 
-from eden.core.config.api import config
+from eden.core.config import config
 
 
 COMMAND_DIR = 'commands'
