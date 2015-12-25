@@ -26,7 +26,7 @@ def application():
 
     for middleware in middleware_list:
         if app:
-            app = import_string(middleware)(app.wsgi_app)
+            app = import_string(middleware)(app)
         else:
             app = import_string(middleware)()
 

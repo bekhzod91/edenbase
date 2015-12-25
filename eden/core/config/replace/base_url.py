@@ -10,12 +10,10 @@ __status__ = "Development"
 
 import os
 
+
 class BaseUrl(object):
     identifier = '%base_url%'
 
     def handler(self, content):
         base_url = os.environ.get('EDEN_APP_DIR')
-        content.replace(self.identifier, base_url)
-
-        return content
-
+        return content.replace(self.identifier, base_url)

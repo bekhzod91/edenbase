@@ -5,11 +5,17 @@ __version__ = "0.0.1"
 __email__ = "bekhzod.tillakhanov@gmail.com"
 __status__ = "Development"
 
+
+# Python module
+import os
+
 # Eden module
 from eden.core.pattern.singleton import Singleton
 from eden.core.config import config
 from eden.core.utils import import_string
 from eden.components.werkzeug import exception
+from eden.components.werkzeug.template import (
+    WERKZEUG_TEMPLATE_DIR, render_to_string)
 
 # Werkzeug module
 from werkzeug.routing import Map, Rule
@@ -110,6 +116,15 @@ class RoutingMiddleware(object):
             return view_handler(request, **values)
 
         except HTTPException as http_exception:
+            template = WERKZEUG_TEMPLATE_DIR + '/' + \
+                str(http_exception.code) + '.html'
+            if os.path.exists(template):
+                content = render_to_string(
+                    template, description=http_exception.description,
+                    code=http_exception.code
+                )
+                return Response(
+                    content, http_exception.code, content_type='text/html')
             return Response(http_exception.description, http_exception.code)
 
     def wsgi_app(self, environ, start_response):

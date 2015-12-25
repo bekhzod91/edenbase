@@ -13,9 +13,9 @@ components:
   - eden.components.jinja
 
 
-# ---------------------
-# Database setting    |
-# ---------------------
+# ----------------------
+# Database connection  |
+# ----------------------
 database:
     database: 'postgresql'
     database_hostname: 'localhost'
@@ -27,8 +27,5 @@ database:
 
 # ---------------------
 # Template url        |
-#----------------------
+# ---------------------
 base_url: '%base_url%/template'
-
-
-
