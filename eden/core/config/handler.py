@@ -9,7 +9,8 @@ __email__ = "bekhzod.tillakhanov@gmail.com"
 __status__ = "Development"
 
 import os
-from eden.core.format import YamlFormat
+
+from eden.core.format.yaml_format import YamlFormat
 from eden.core.pattern.singleton import Singleton
 
 from .replace.base_url import BaseUrl
@@ -53,8 +54,10 @@ class Config(Singleton):
             return self.__config[config_file][key]
         except KeyError:
             self.__config[config_file] = self.__get_config(config_file)
-            return self.get_value(key, config_file)
 
+            if self.__config[config_file].get(key):
+                return self.get_value(key, config_file)
+            return None
 
 
 def config(key, config_file=None):

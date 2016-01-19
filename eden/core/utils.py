@@ -22,3 +22,6 @@ def import_string(string):
             'Module %s can\'t find please check correct path' % string)
 
 
+class AttributeDict(dict):
+    __getattr__ = dict.__getitem__
+    __setattr__ = dict.__setitem__

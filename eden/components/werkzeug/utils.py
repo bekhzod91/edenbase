@@ -16,7 +16,7 @@ def find_config_files(file_ext):
     Exist restriction of deep folders
     """
     __main__ = __import__('__main__')
-    dir_name = os.path.dirname(__main__.__file__)
+    dir_name = os.path.abspath(os.path.dirname(__main__.__file__))
 
     def find_files_list(dir_path, deep=0):
         if deep <= MAX_DEEP_FOLDER and not dir_name.startswith('.'):

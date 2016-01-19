@@ -8,7 +8,10 @@ __version__ = "0.0.1"
 __email__ = "bekhzod.tillakhanov@gmail.com"
 __status__ = "Development"
 
-from werkzeug.wrappers import Response
+from eden.components.werkzeug.jinja import render_to_response
+
 
 def hello(request, **kwargs):
-    return Response("Hello World")
+    return render_to_response(
+        'mytemplate.html', {'hello': [1, 2, 3, 4, 5, 6]}
+    )

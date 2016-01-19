@@ -11,9 +11,10 @@ __status__ = "Development"
 
 from eden.core.commands.base import CommandBase
 
+
 class ClearCache(CommandBase):
     helper = 'run command clear jinja template cache'
 
     def handler(self, *args, **kwargs):
-        print(args)
-        print(kwargs)
+        import jinja2
+        jinja2.clear_caches()

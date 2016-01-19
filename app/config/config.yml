@@ -3,7 +3,7 @@
 # -------------------------------------------------
 
 # SECURITY WARNING: don't run with debug turned on in production!
-debug: False
+debug: True
 
 # -------------------------
 # Components plugins      |
@@ -34,15 +34,20 @@ werkzeug_route:
 
 # Werkzeug middleware
 werkzeug_middleware:
-  - eden.components.werkzeug.middleware.RoutingMiddleware
-  - eden.components.werkzeug.middleware.StaticFilesMiddleware
+  - eden.components.werkzeug.middleware.RoutingMiddleware.RoutingMiddleware
+  - eden.components.werkzeug.middleware.StaticFilesMiddleware.StaticFilesMiddleware
+
 
 werkzeug_static_url: '/static'
 werkzeug_static_root: '%base_url%/static'
 
 
 # Jinja tempalte url
-jinja_config: '%base_url%/template'
+jinja_template_urls: '%base_url%/app/my_component/templates'
+
+jinja_cache:
+    class: 'FileSystemBytecodeCache'
+
 
 
 
