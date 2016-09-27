@@ -5,6 +5,6 @@ git clone https://github.com/myrubapa/edenbase.git
 cd edenbase
 pip install -r requirements.txt
 </pre>
-![alt tag](https://lh5.googleusercontent.com/mjxGjM8hMRCt2F8D8T9NOIEo_7TiN3dVtJGt69MHI9FYq1xFB2-b6C8vlFsDDQZdX4_qzEX7yWI7pjI=w1920-h987-rw)
+![alt tag](https://raw.githubusercontent.com/myrubapa/edenbase/rawcontent/Screenshot%20from%202016-09-27%2016-08-06.png)
 
 
